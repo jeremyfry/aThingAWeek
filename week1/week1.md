@@ -4,5 +4,6 @@
 * Do simple image manipulation with canvas
 * Create a simple node server task to handle dynamic images
 * Have a simple web front for the project
+
 ## Link
 [Place Badger Repo](https://github.com/jeremyfry/PlaceBadger)
