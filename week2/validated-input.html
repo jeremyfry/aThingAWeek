@@ -1,0 +1,70 @@
+<template>
+	<style>
+		.wrapper{
+			display: inline-block;
+		}
+		input{
+			padding: 3px 10px;
+			float: left;
+		}
+		.error{
+			font-weight: bold;
+			color: #D00;
+			clear: left;
+			float: left;
+			padding: 3px;
+			display: none;
+		}
+	</style>
+	<div class="wrapper">
+		<input type="text">
+		<span class="error" data-error-message></span>
+	</div>
+</template>
+<script>
+	(function(window, document, undefined) {
+		var thatDoc = document;
+		var thisDoc =  (thatDoc._currentScript || thatDoc.currentScript).ownerDocument;
+
+		var template = thisDoc.querySelector('template').content;
+		var elementProto = Object.create(HTMLElement.prototype);
+		var _this;
+
+		function validate(e){
+			_this.errorElement.style.display = 'none';
+
+			if(!_this.validationRegex.test(this.value)){
+				_this.errorElement.style.display = 'block';
+			}
+		}
+
+		elementProto.createdCallback = function() {
+			_this = this;
+			this.shadowRoot = this.createShadowRoot();
+			var clone = thatDoc.importNode(template, true);
+			this.shadowRoot.appendChild(clone);
+
+			this.validationRegex = this.hasAttribute('validation') ?
+				new RegExp(this.getAttribute('validation')) :  /.+/;
+
+			this.errorElement = this.shadowRoot.querySelector('[data-error-message]');
+			this.errorElement.textContent = this.hasAttribute('error-message') ?
+				this.getAttribute('error-message') : 'Cannot be blank';
+		};
+
+		elementProto.attachedCallback = function() {
+			var input = this.shadowRoot.querySelector('input');
+			input.addEventListener('keyup', validate);
+			input.addEventListener('blur', validate);
+		};
+
+		elementProto.detachedCallback = function() {
+			input.removeEventListener('keyup', validate);
+			input.removeEventListener('blur', validate);
+		};
+
+		window.ValidatedInput = thatDoc.registerElement('validated-input', {
+			prototype: elementProto
+		});
+	})(window, document);
+</script>
