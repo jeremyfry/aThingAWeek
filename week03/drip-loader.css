@@ -1,7 +1,73 @@
-.wrapper{
+@-webkit-keyframes buoyancy {
+	0%, 100% {
+		transform: translateY(-40%);
+	}
+
+	50% {
+		transform: translateY(-10%);
+	}
+}
+svg{
+	display: none;
+}
+.wrapper {
 	width: 100%;
 	height: 100%;
 	background: #ccc;
 	border-radius: 50%;
 	overflow: hidden;
+	border: 2px solid black;
+	transform: translateY(0); /*makes overflow hidden work*/
 }
+
+.glob-group {
+  -webkit-filter:url("#goo");
+  position: relative;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+}
+
+.crest, .pool {
+	background-color: blue;
+	position: absolute;
+}
+
+.crest {
+	width: 30%;
+	height: 10%;
+	border-radius: 50%;
+	bottom: 10%;
+}
+.crest:nth-child(odd){
+	-webkit-animation: buoyancy 2s infinite;
+}
+
+.crest:nth-child(even){
+	-webkit-animation: buoyancy 2s infinite;
+	-webkit-animation-delay: 1s;
+	-webkit-animation-timing-function: linear;
+}
+
+
+.crest:nth-child(2){
+	left: 25%;
+}
+
+.crest:nth-child(3){
+	left: 50%;
+}
+
+.crest:nth-child(4){
+	left: 75%;
+}
+
+.pool {
+	width: 120%;
+	height: 20%;
+	bottom: 0;
+	left: -10%;
+}
+
+
+

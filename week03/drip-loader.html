@@ -1,14 +1,43 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
 <polymer-element name="drip-loader">
 	<template>
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+			<defs>
+				<filter id="goo">
+					<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+					<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+					<feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+				</filter>
+			</defs>
+		</svg>
+
 		<link rel="stylesheet" type="text/css" href="drip-loader.css">
-		<div class="wrapper">{{testProp}}</div>
+		<div id="container" class="wrapper">
+
+			<div class="glob-group">
+				<div data-crest class="crest"></div>
+				<div data-crest class="crest"></div>
+				<div data-crest class="crest"></div>
+				<div data-crest class="crest"></div>
+				<div data-pool class="pool"></div>
+			</div>
+		</div>
 	</template>
 	<script>
 		Polymer({
-			testProp: 'test2',
 			ready: function() {
-				//...
+				this.addEventListener('percentage', this.adjustPercentage);
+			},
+			adjustPercentage: function(event) {
+				var percentage = event.detail || 0;
+				//adjust the height of the water and the position of the crests
+				var pool = this.$.container.querySelector('[data-pool]');
+				var crests = this.$.container.querySelectorAll('[data-crest]');
+				pool.style.height = percentage+"%";
+				var crestPercentage = percentage-10+"%";
+				[].forEach.call(crests, function(crest){
+					crest.style.bottom = crestPercentage;
+				});
 			}
 		});
 	</script>

@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>Drip Progress Bar</title>
-	<script src="bower_componenets/webcomponentssj/webcomponents.js"></script>
+	<script src="bower_components/webcomponentsjs/webcomponents.js"></script>
     <link rel="import" href="drip-loader.html">
     <style>
     drip-loader{
@@ -14,5 +14,28 @@
 </head>
 <body>
 	<drip-loader></drip-loader>
+    <label> Percentage per cycle <input type="number" data-percent-per-cycle></label>
+    <button data-fire-load>Fire Loader</button>
+    <script>
+        (function(){
+            var currentPercentage = 0;
+            var intervalId = null;
+            var loader = document.querySelector('drip-loader');
+            document.querySelector('[data-fire-load]').addEventListener('click', function(){
+                window.clearInterval(intervalId);
+                currentPercentage = 0;
+                var ppc = parseFloat(document.querySelector('[data-percent-per-cycle]').value);
+                intervalId = setInterval(function(){
+                    currentPercentage = currentPercentage+ppc;
+                    loader.fire('percentage', currentPercentage);
+                    if(currentPercentage >= 100){
+                        window.clearInterval(intervalId);
+                    }
+                }, 200);
+            });
+        })()
+
+
+    </script>
 </body>
 </html>
