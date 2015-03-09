@@ -6,15 +6,16 @@
     <link rel="import" href="drip-loader.html">
     <style>
     drip-loader{
-    	width: 100px;
-    	height: 100px;
-    	display: block;
+		width: 200px;
+		height: 200px;
+		display: block;
+		margin-bottom: 10px;
     }
     </style>
 </head>
 <body>
 	<drip-loader></drip-loader>
-    <label> Percentage per cycle <input type="number" data-percent-per-cycle></label>
+    <label> Percentage per cycle <input type="number" data-percent-per-cycle value="2"></label>
     <button data-fire-load>Fire Loader</button>
     <script>
         (function(){
@@ -31,9 +32,9 @@
                     if(currentPercentage >= 100){
                         window.clearInterval(intervalId);
                     }
-                }, 200);
+                }, 500);
             });
-        })()
+		})();
 
 
     </script>

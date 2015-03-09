@@ -2,23 +2,33 @@
 <polymer-element name="drip-loader">
 	<template>
 		<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+			<circle id="clipImage" cx="98" cy="98" r="98" fill="red" />
 			<defs>
 				<filter id="goo">
+					<feImage x="0" y="0" width="200" height="200" xlink:href="#clipImage" result="clip"/>
 					<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
 					<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
-					<feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+					<feComposite in2="clip" in="goo" operator="in"/>
 				</filter>
 			</defs>
 		</svg>
 
 		<link rel="stylesheet" type="text/css" href="drip-loader.css">
 		<div id="container" class="wrapper">
-
+			<div class="drop-wrapper">
+				<div class="droplet" data-droplet></div>
+			</div>
+			<div class="precentage-text" data-percentage-text></div>
 			<div class="glob-group">
-				<div data-crest class="crest"></div>
-				<div data-crest class="crest"></div>
-				<div data-crest class="crest"></div>
-				<div data-crest class="crest"></div>
+
+				<div class="crest-group" data-crest-group>
+					<div class="crest"></div>
+					<div class="crest"></div>
+				</div>
+
+				<div data-bubble-right class="bubble"></div>
+				<div data-bubble-left class="bubble"></div>
+
 				<div data-pool class="pool"></div>
 			</div>
 		</div>
@@ -27,18 +37,55 @@
 		Polymer({
 			ready: function() {
 				this.addEventListener('percentage', this.adjustPercentage);
+				this.lastChange = +new Date();
+				this.droplet = this.$.container.querySelector('[data-droplet]');
+				this.rightBubble = this.$.container.querySelector('[data-bubble-right]');
+				this.leftBubble = this.$.container.querySelector('[data-bubble-left]');
+				this.pool = this.$.container.querySelector('[data-pool]');
+				this.crestGroup = this.$.container.querySelector('[data-crest-group]');
+				this.percentageText = this.$.container.querySelector('[data-percentage-text]');
+				this.previousPercentage = 0;
+
+				this.rightBubble.addEventListener('webkitAnimationEnd', function(){
+					this.classList.remove('bubble-up-right');
+				}, false);
+
+				this.leftBubble.addEventListener('webkitAnimationEnd', function(){
+					this.classList.remove('bubble-up-left');
+				}, false);
 			},
 			adjustPercentage: function(event) {
-				var percentage = event.detail || 0;
-				//adjust the height of the water and the position of the crests
-				var pool = this.$.container.querySelector('[data-pool]');
-				var crests = this.$.container.querySelectorAll('[data-crest]');
-				pool.style.height = percentage+"%";
-				var crestPercentage = percentage-10+"%";
-				[].forEach.call(crests, function(crest){
-					crest.style.bottom = crestPercentage;
-				});
+				var tickTime = +new Date();
+				this.percentageText.innerHTML = event.detail+'%';
+				var percentage = event.detail || 1;
+
+				if(tickTime - this.lastChange > 2000){
+					this.droplet.style.top = 110-this.previousPercentage+'%';
+					this.lastChange = tickTime;
+					this.droplet.classList.add('dropped');
+
+					setTimeout(function(){
+						this.rightBubble.classList.add('bubble-up-right');
+						this.leftBubble.classList.add('bubble-up-left');
+
+						this.droplet.classList.remove('dropped');
+						this.droplet.style.top = 0;
+						this.updateWater(percentage);
+					}.bind(this), 700);
+				}else{
+					this.updateWater(percentage);
+				}
+			},
+			updateWater: function(percentage){
+				this.leftBubble.style.marginTop = 100-percentage+'%';
+				this.rightBubble.style.marginTop = 100-percentage+'%';
+
+				this.pool.style.height = percentage+'%';
+				this.crestGroup.style.marginTop = 110-percentage+'%';
+
+				this.previousPercentage = percentage;
 			}
 		});
 	</script>
 </polymer-element>
+
